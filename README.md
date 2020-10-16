@@ -28,8 +28,5 @@ cupcupbab
 abc
 
 def
-<<<<<<< HEAD
 
 나영-디테일 페이지 추가 
-=======
->>>>>>> ad99d5bd3e3736944ea3de53fe9adb0e497c39ae
