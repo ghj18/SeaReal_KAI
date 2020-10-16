@@ -1,6 +1,3 @@
-<<<<<<< HEAD
 디테일추가
 gahee23ll
-=======
 디테일추가gaheellllaaaa
->>>>>>> main
