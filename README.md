@@ -20,3 +20,5 @@ cupcupbab
 abc
 
 def
+
+나영-디테일 페이지 추가 
