@@ -1,0 +1,97 @@
+import numpy as np
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+class similarity:
+    def list_to_vector(self, reqList):
+        tfidf_vect_simple = TfidfVectorizer()
+        reqVector = tfidf_vect_simple.fit_transform(reqList)
+        return reqVector
+    
+    def vector_to_dense(self, reqVector):
+        denseMatrix = reqVector.todense()
+        return denseMatrix
+    
+    def checkSim(self, denseMatrix):
+        vect1 = np.array(denseMatrix[0]).reshape(-1,)
+        vect2 = np.array(denseMatrix[1]).reshape(-1,)
+        dot_product = np.dot(vect1, vect2)
+        print("dot = ", dot_product)
+        l2_norm = (np.sqrt(sum(np.square(vect1))) * np.sqrt(sum(np.square(vect2))))
+        print("norm = ", l2_norm)
+        similarity = dot_product / l2_norm  
+        return similarity
+    def result(self, reqArr, cnt):
+        print("lll")
+
+class internal_similarity(similarity):
+    def result(self, reqArr, cnt):
+        df = pd.read_excel('C:/Users/nayoung/kai_python/requirement.xlsx')
+        dff=df.loc[[cnt],:]
+        arr=dff.values
+
+        sim = similarity()
+        excelArr = np.ravel(arr, order='C')
+        print(excelArr)
+        doc = [0, 0]
+        simArr = []
+        length = len(reqArr)
+        for x in range(0, length-1, 1):
+            doc[0] = excelArr[x+3]
+            doc[1] = reqArr[x]
+            reqVector = sim.list_to_vector(doc)
+            denseMatrix = sim.vector_to_dense(reqVector)
+            simNum = sim.checkSim(denseMatrix)
+            simArr.append(simNum) 
+        if(excelArr[6] == reqArr[length-1]):
+            simArr.append(1)
+        else:
+            simArr.append(0)
+            simArr = [0]*len(simArr)
+        weightSum = 0.7*simArr[0] + simArr[1] + 0.2*simArr[2] + 0.2*simArr[3]
+        print(simArr)
+        return weightSum
+
+    
+class external_similarity(similarity):
+    def result(self, reqArr, cnt):
+        df = pd.read_excel('C:/Users/nayoung/kai_python/requirement.xlsx')
+        dff=df.loc[[27],:]
+        arr=dff.values
+        sim = similarity()
+        excelArr = np.ravel(arr, order='C')
+        doc = [0, 0]
+        simArr = []
+        length = len(reqArr)
+        print("req = ", reqArr)
+        for x in range(0, length, 1):
+            doc[0] = excelArr[x+3]
+            doc[1] = reqArr[x]
+            reqVector = sim.list_to_vector(doc)
+            denseMatrix = sim.vector_to_dense(reqVector)
+            simNum = sim.checkSim(denseMatrix)
+            simArr.append(simNum)
+        weightSum = 0.7*simArr[0] + simArr[1] + 0.5*simArr[2]
+        print("sum = ", weightSum)
+        
+
+df = pd.read_excel('C:/Users/nayoung/kai_python/requirement.xlsx')
+
+sim = []
+x=0
+while(pd.isnull(df.loc[x, 'Unit']) != True):
+    print('x = ', x)
+    a = internal_similarity()
+    b=['apple', 'apple', 'apple', 1312]
+    simil = a.result(b, x)
+    sim.append(simil)
+    x = x + 1
+print(sim)
+df2 = pd.DataFrame({'similarity' : sim})
+df2.to_excel('C:/Users/nayoung/kai_python/test.xlsx', sheet_name = 'Sheet1', 
+            header = True,         
+            index = True, 
+            index_label = "Unit", 
+            startrow = 0, 
+            startcol = 0, 
+            ) 
